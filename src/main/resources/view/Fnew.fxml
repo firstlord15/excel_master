@@ -88,13 +88,13 @@
                                     <Font name="JetBrains Mono NL ExtraBold" size="20.0" />
                                  </font>
                               </Label>
-                              <ComboBox fx:id="comboBox" prefHeight="45.0" prefWidth="153.0" promptText="Обычная" styleClass="comboBox" stylesheets="@css/fruit.css" />
+                              <ComboBox fx:id="comboBox" prefHeight="45.0" prefWidth="153.0" promptText="Выбор поставки" styleClass="comboBox" stylesheets="@css/fruit.css" />
                            </children>
                            <VBox.margin>
                               <Insets top="20.0" />
                            </VBox.margin>
                         </HBox>
-                        <Button mnemonicParsing="false" prefHeight="50.0" prefWidth="270.0" styleClass="add-btn" stylesheets="@css/fruit.css" text="START" textFill="#828282">
+                        <Button fx:id="startButton" mnemonicParsing="false" prefHeight="50.0" prefWidth="270.0" styleClass="add-btn" stylesheets="@css/fruit.css" text="START" textFill="#828282">
                            <VBox.margin>
                               <Insets bottom="20.0" top="30.0" />
                            </VBox.margin>
