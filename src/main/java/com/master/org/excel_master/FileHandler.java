@@ -15,7 +15,10 @@ public class FileHandler {
         );
 
         File selectedFile = fileChooser.showOpenDialog(stage);
-        if (selectedFile != null) System.out.println("Выбран файл: " + selectedFile.getAbsolutePath());
+        if (selectedFile != null){
+            System.out.println("Выбран файл: " + selectedFile.getName());
+            System.out.println("Путь: " + selectedFile.getAbsolutePath());
+        }
         else System.out.println("Файл не выбран");
 
         return selectedFile;

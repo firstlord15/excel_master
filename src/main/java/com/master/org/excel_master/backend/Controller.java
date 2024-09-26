@@ -1,14 +1,14 @@
 package com.master.org.excel_master.backend;
 
-import static com.master.org.excel_master.AlertUtils.*;
 import com.master.org.excel_master.FileHandler;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.stage.Stage;
 
 import java.io.File;
+
+import static com.master.org.excel_master.AlertUtils.showInfoAlert;
 
 public class Controller {
     private final String CasualDelivery = "Обычная поставка";
