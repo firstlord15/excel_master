@@ -1,70 +1,57 @@
 package com.master.org.excel_master;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.io.*;
+import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Setting {
-    private List<String> settingProperties = List.of("Pattern", "Numbers");
-    private String configDirectoryPath = "src/main/resources/config";
-    private String configFilePath = getConfigDirectoryPath() + "/config.properties";
+    private static final Logger LOGGER = Logger.getLogger(Setting.class.getName());
+    private List<Settings> settingProperties = new ArrayList<>();
+    private String configDirectoryPath;
+    private String configFilePath;
+
+    public Setting() {
+        this.settingProperties.addAll(List.of(Settings.PATTERN, Settings.NUMBER));
+        this.configDirectoryPath = "src/main/resources/config";
+        this.configFilePath = getConfigDirectoryPath() + "/config.properties";
+    }
 
     public String getConfigDirectoryPath() {
         return configDirectoryPath;
-    }
-
-    public void setConfigDirectoryPath(String configDirectoryPath) {
-        this.configDirectoryPath = configDirectoryPath;
     }
 
     public String getConfigFilePath() {
         return configFilePath;
     }
 
+    public List<Settings> getSettingProperties() {
+        return settingProperties;
+    }
+
+    public void setConfigDirectoryPath(String configDirectoryPath) {
+        this.configDirectoryPath = configDirectoryPath;
+    }
+
     public void setConfigFilePath(String configFilePath) {
         this.configFilePath = configFilePath;
     }
 
-    public List<String> getSettingProperties() {
-        return settingProperties;
-    }
-
-    public void setSettingProperties(List<String> settingProperties) {
+    public void setSettingProperties(List<Settings> settingProperties) {
         this.settingProperties = settingProperties;
-    }
-
-    public void readConfigFile() {
-        Map<String, String> mapProperties;
-        Properties properties = new Properties();
-
-        try (FileInputStream fis = new FileInputStream(getConfigFilePath())) {
-            properties.load(fis);
-            mapProperties = getSettingProperties()
-                    .stream()
-                    .collect(Collectors.toMap(propertyKey -> propertyKey, properties::getProperty, (a, b) -> b));
-
-            System.out.println(mapProperties.toString());
-        } catch (IOException e) {
-            System.out.println(e.getMessage());;
-        }
     }
 
     public void createConfigFile() {
         // Проверяем наличие папки и создаём её, если она отсутствует
         File configDirectory = new File(getConfigDirectoryPath());
         File configFile = new File(configDirectory, "config.properties");
-        if (!configDirectory.exists()) {
-            if (configDirectory.mkdir())
-                System.out.println("Папка \"config\" успешно создана.");
-            else {
-                System.out.println("Не удалось создать папку \"config\".");
-                return;
-            }
+
+        if (!configDirectory.exists()) if (configDirectory.mkdirs()) {
+            System.out.println("Папка \"config\" успешно создана.");
+        } else {
+            System.out.println("Не удалось создать папку \"config\".");
+            return;
         }
 
         // Проверяем наличие файла config.properties
@@ -73,17 +60,50 @@ public class Setting {
             return; // Если файл существует, не создаём его заново
         }
 
+        saveConfigFile(configFile, settingProperties.stream()
+                .map(Settings::getDefaultValue)
+                .collect(Collectors.toList()));
+    }
+
+
+    public void editConfigFile(List<String> values) {
+        File configDirectory = new File(getConfigDirectoryPath());
+        File configFile = new File(configDirectory, "config.properties");
+        saveConfigFile(configFile, values);
+    }
+
+    public Map<String, String> readConfigFile() {
         Properties properties = new Properties();
-        for (String propertyKey : getSettingProperties()) {
-            properties.setProperty(propertyKey, "");
+        try (FileInputStream fis = new FileInputStream(getConfigFilePath())) {
+            properties.load(fis);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
+
+        return convertPropertiesToMap(properties);
+    }
+
+    private Map<String, String> convertPropertiesToMap(Properties properties) {
+        return getSettingProperties().stream().collect(Collectors.toMap(
+                Settings::getClassName, settings -> properties.getProperty(settings.getClassName())
+        ));
+    }
+
+    private void saveConfigFile(File configFile, List<String> values) {
+        Properties properties = new Properties();
+        List<Settings> settings = getSettingProperties();
+        IntStream.range(0, settings.size()).forEach(i -> {
+            Settings propertyKey = settings.get(i);
+            String value = values.isEmpty() ? propertyKey.getDefaultValue() : values.get(i);
+            properties.setProperty(propertyKey.getClassName(), value);
+        });
 
         // Записываем параметры в файл
         try (FileOutputStream fos = new FileOutputStream(configFile)) {
             properties.store(fos, "Config file with default settings");
-            System.out.println("Файл config.properties успешно создан в папке \"config\".");
+            LOGGER.info("Конфигурационный файл сохранен.");
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            LOGGER.severe("Ошибка записи файла: " + e.getMessage());
         }
     }
 }

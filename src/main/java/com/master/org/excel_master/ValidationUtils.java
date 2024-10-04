@@ -15,6 +15,11 @@ public class ValidationUtils {
     }
 
     // Проверка формата файла
+    public boolean validateSettings(Settings settings, String value) {
+        return false;
+    }
+
+    // Проверка формата файла
     public boolean validateFileFormat(File file) {
         String fileName = file.getName().toLowerCase(Locale.ROOT);
         return fileName.endsWith(".xlsx") || fileName.endsWith(".xls");
