@@ -20,10 +20,6 @@ public class FileHandler {
             System.out.println("Путь: " + selectedFile.getAbsolutePath());
         }
         else System.out.println("Файл не выбран");
-
         return selectedFile;
     }
-
-
-
 }
