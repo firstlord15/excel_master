@@ -1,4 +1,4 @@
-package com.master.org.excel_master;
+package com.master.org.excel_master.utils;
 
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -10,8 +10,7 @@ public class FileHandler {
     public File openFileChooser(Stage stage) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Excel Files", "*.xlsx", "*.xls"),
-                new FileChooser.ExtensionFilter("All Files", "*.*")
+                new FileChooser.ExtensionFilter("Excel Files", "*.xlsx", "*.xls")
         );
 
         File selectedFile = fileChooser.showOpenDialog(stage);

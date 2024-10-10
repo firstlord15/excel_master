@@ -1,6 +1,4 @@
-package com.master.org.excel_master.frontend;
-
-import java.net.URL;
+package com.master.org.excel_master;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -8,6 +6,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+
+import java.net.URL;
 
 public class View extends Application {
     @Override

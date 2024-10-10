@@ -1,6 +1,6 @@
-package com.master.org.excel_master.backend;
+package com.master.org.excel_master.controllers;
 
-import com.master.org.excel_master.FileHandler;
+import com.master.org.excel_master.utils.FileHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
-import static com.master.org.excel_master.AlertUtils.showInfoAlert;
+import static com.master.org.excel_master.utils.AlertUtils.showInfoAlert;
 
 public class Controller {
     private final String CasualDelivery = "Обычная поставка";

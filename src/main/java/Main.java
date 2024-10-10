@@ -1,8 +1,8 @@
-import com.master.org.excel_master.ExcelEditor;
+import com.master.org.excel_master.services.ExcelEditor;
 
 public class Main {
     public static void main(String[] args) {
         ExcelEditor excelEditor = new ExcelEditor();
-        excelEditor.newMain();
+        excelEditor.toConsole();
     }
 }
