@@ -5,12 +5,15 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.stage.Stage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import java.io.File;
+import java.text.MessageFormat;
 
 import static com.master.org.excel_master.utils.AlertUtils.showInfoAlert;
 
 public class Controller {
+    private static final Logger LOGGER = LogManager.getLogger(FileHandler.class);
     private final String CasualDelivery = "Обычная поставка";
     private final String QrDelivery = "QR поставка";
 
@@ -22,25 +25,34 @@ public class Controller {
 
     @FXML
     public void initialize() {
+        LOGGER.atInfo().log("Controller initialized");
         startButton.setOnAction(event -> handleStartButtonClick());
         comboBox.getItems().addAll(CasualDelivery, QrDelivery);
+        LOGGER.atInfo().log(MessageFormat.format("ComboBox items added: {0} and {1}", CasualDelivery, QrDelivery));
     }
 
     // Метод выбора типа функции
     private void handleStartButtonClick() {
         String selectedOption = comboBox.getValue();
         if (CasualDelivery.equals(selectedOption)) {
-            FileHandler fh = new FileHandler();
-            Stage stage = (Stage) startButton.getScene().getWindow();
-            File ourFile = fh.openFileChooser(stage);
+            LOGGER.atInfo().log("Casual Delivery selected");
+            casualDeliveryMethod();
         } else if (QrDelivery.equals(selectedOption)) {
-            QrDeliveryMethod();
+            LOGGER.atInfo().log("QR Delivery selected");
+            qrDeliveryMethod();
         } else {
-            showInfoAlert("Предупреждение", "Ай Ай Ай, не так быстро, сначала выбери тип поставки.");
+            LOGGER.atInfo().log("No delivery type selected");
+            showInfoAlert("Warning", "Hold on, choose a delivery type first.");
         }
     }
 
-    private void QrDeliveryMethod() {
-        System.out.println("Выбрана QR поставка, действие не требуется");
+    private void casualDeliveryMethod() {
+        FileHandler fh = new FileHandler();
+        Stage stage = (Stage) startButton.getScene().getWindow();
+        LOGGER.atInfo().log("Starting file processing in casual delivery mode");
+        fh.chooseAndProcessFile(stage);
+    }
+    private void qrDeliveryMethod() {
+        LOGGER.atInfo().log("QR Delivery selected, no further action required");
     }
 }

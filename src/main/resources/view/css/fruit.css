@@ -30,6 +30,12 @@
     -fx-background-radius: 30;
 }
 
+.add-btn-seccandary{
+    -fx-background-color: #d8d8d8;
+    -fx-background-radius: 10;
+}
+
+
 .add-btn{
     -fx-background-color: #FFFFFF;
     -fx-background-radius: 100;

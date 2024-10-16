@@ -16,6 +16,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="810.0" prefWidth="1315.0" stylesheets="@css/fruit.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.master.org.excel_master.controllers.Controller">
@@ -87,20 +88,45 @@
                                  <font>
                                     <Font name="JetBrains Mono NL ExtraBold" size="20.0" />
                                  </font>
+                                 <HBox.margin>
+                                    <Insets left="10.0" />
+                                 </HBox.margin>
                               </Label>
-                              <ComboBox fx:id="comboBox" prefHeight="45.0" prefWidth="153.0" promptText="Выбор поставки" styleClass="comboBox" stylesheets="@css/fruit.css" />
+                              <ComboBox fx:id="comboBox" prefHeight="45.0" prefWidth="140.0" promptText="Выбор поставки" styleClass="comboBox" stylesheets="@css/fruit.css">
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin></ComboBox>
                            </children>
                            <VBox.margin>
                               <Insets top="20.0" />
                            </VBox.margin>
                         </HBox>
-                        <Button fx:id="startButton" mnemonicParsing="false" prefHeight="50.0" prefWidth="270.0" styleClass="add-btn" stylesheets="@css/fruit.css" text="START" textFill="#828282">
+                        <Line endX="100.0" opacity="0.8" startX="-208.4232940673828" startY="1.6033649444580078E-5" stroke="#e0e0e0">
+                           <VBox.margin>
+                              <Insets bottom="16.0" top="15.0" />
+                           </VBox.margin>
+                        </Line>
+                        <Button alignment="CENTER" mnemonicParsing="false" prefHeight="60.0" prefWidth="155.0" stylesheets="@css/fruit.css" text="Add setting file">
+                           <styleClass>
+                              <String fx:value="add-btn-seccandary" />
+                              <String fx:value="shadow" />
+                           </styleClass>
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Button>
+                        <HBox alignment="CENTER" prefHeight="53.0" prefWidth="335.0" />
+                        <Button fx:id="startButton" mnemonicParsing="false" prefHeight="50.0" prefWidth="270.0" stylesheets="@css/fruit.css" text="START" textFill="#828282">
                            <VBox.margin>
                               <Insets bottom="20.0" top="30.0" />
                            </VBox.margin>
                            <font>
                               <Font name="System Bold" size="18.0" />
                            </font>
+                           <styleClass>
+                              <String fx:value="add-btn" />
+                              <String fx:value="shadow" />
+                           </styleClass>
                         </Button>
                      </children>
                      <styleClass>
@@ -134,7 +160,7 @@
                            </font>
                         </Label>
                         <Pane prefHeight="65.0" prefWidth="393.0" HBox.hgrow="ALWAYS" />
-                        <Label prefHeight="62.0" prefWidth="120.0" text="Мой Аккаунт" textFill="#878787">
+                        <Label contentDisplay="CENTER" prefHeight="62.0" prefWidth="120.0" text="Атай" textFill="#878787">
                            <font>
                               <Font name="JetBrains Mono NL ExtraBold" size="17.0" />
                            </font>
