@@ -4,8 +4,12 @@ import java.io.File;
 
 public class Main {
     public static void main(String[] args) {
+        File file1 = new File("C:\\Users\\firstlord\\OneDrive\\Рабочий стол\\file.xlsx");
+        File file2 = new File("C:\\Users\\firstlord\\OneDrive\\Рабочий стол\\shk-excel.xlsx");
         DataProcessor dataProcessor = new DataProcessor();
-        dataProcessor.setFile(new File("src/resources/file.xlsx"));
-        dataProcessor.toConsole();
+        dataProcessor.setMainFile(file1);
+        dataProcessor.setSecondaryFile(file2);
+        dataProcessor.toMainConsole();
+        dataProcessor.toSHKConsole();
     }
 }

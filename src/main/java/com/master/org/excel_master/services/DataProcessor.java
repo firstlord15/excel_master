@@ -17,15 +17,25 @@ import java.util.List;
 
 public class DataProcessor {
     private static final Logger LOGGER = LogManager.getLogger(FileHandler.class);
-    private File file;
+    private File mainFile;
+    private File secondaryFile;
 
     public DataProcessor() {}
 
-    public File getFile() {
-        return file;
+    public File getMainFile() {
+        return mainFile;
     }
-    public void setFile(File file) {
-        this.file = file;
+
+    public void setMainFile(File mainFile) {
+        this.mainFile = mainFile;
+    }
+
+    public File getSecondaryFile() {
+        return secondaryFile;
+    }
+
+    public void setSecondaryFile(File secondaryFile) {
+        this.secondaryFile = secondaryFile;
     }
 
     private void processCell(XSSFCell cell, RowData rowData, int colIndex, double[] countBoxes) {
@@ -36,7 +46,7 @@ public class DataProcessor {
         }
     }
 
-    private RowData processRow(XSSFRow row, double[] countBoxes) {
+    private RowData mainProcessRow(XSSFRow row, double[] countBoxes) {
         RowData rowData = new RowData();
         for (int colIndex = 0; colIndex < row.getLastCellNum(); colIndex++) {
             XSSFCell cell = row.getCell(colIndex);
@@ -52,38 +62,66 @@ public class DataProcessor {
         LOGGER.info("Extracting data cells from sheet...");
         List<RowData> data = new ArrayList<>();
         double[] countBoxes = new double[1];
+
         for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
             XSSFRow row = sheet.getRow(rowIndex);
             if (row != null) {
-                RowData rowData = processRow(row, countBoxes);
-                data.add(rowData);
-            } else LOGGER.atInfo().log("Null row found at index %d.".formatted(rowIndex));
+                data.add(mainProcessRow(row, countBoxes));
+            } else {
+                LOGGER.warn("Null row found at index {}.", rowIndex);
+            }
         }
-        LOGGER.atInfo().log("Row data added x%d.".formatted(data.size()));
-        LOGGER.info("Data cell extraction completed.");
+        LOGGER.info("Row data added: {}", data.size());
         return data;
     }
 
-    public List<RowData> getCells(File file) {
-        LOGGER.atInfo().log("Reading file: %s".formatted(file.getName()));
-        try (FileInputStream fis = new FileInputStream(file)) {
-            XSSFWorkbook workbook = new XSSFWorkbook(fis);
+    private List<RowData> getCells(File file) {
+        LOGGER.info("Reading file: {}", file.getName());
+        try (FileInputStream fis = new FileInputStream(file); XSSFWorkbook workbook = new XSSFWorkbook(fis)) {
             XSSFSheet sheet = workbook.getSheetAt(0);
-            LOGGER.atInfo().log("Sheet processed: %s".formatted(sheet.getSheetName()));
+            LOGGER.info("Sheet processed: {}", sheet.getSheetName());
             return getDataCells(sheet);
         } catch (IOException e) {
-            LOGGER.atError().log("Error reading file: %s".formatted(e));
+            LOGGER.error("Error reading file {}: {}", file.getName(), e.getMessage());
             throw new RuntimeException(e);
         }
     }
 
-    public List<RowData> getData() {
-        return getCells(getFile());
+    private List<String> getDataShkBoxFromFile(File file) {
+        LOGGER.info("Reading file: {}", file.getName());
+        List<String> rowData = new ArrayList<>();
+        try (FileInputStream fis = new FileInputStream(file); XSSFWorkbook workbook = new XSSFWorkbook(fis)) {
+            XSSFSheet sheet = workbook.getSheetAt(0);
+
+            for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+                XSSFRow row = sheet.getRow(rowIndex);
+                if (row != null) {
+                    XSSFCell cell = row.getCell(2); // Получаем ячейку из столбца с индексом 2
+                    if (cell != null) {
+                        rowData.add(cell.toString());
+                    }
+                }
+            }
+            LOGGER.info("Row data extracted successfully");
+        } catch (IOException e) {
+            LOGGER.error("Error reading file {}: {}", file.getName(), e.getMessage());
+        }
+        return rowData;
     }
 
-    public void toConsole() {
-        List<RowData> cells = getCells(getFile());
-        cells.stream().map(RowData::toString).forEach(System.out::println);
+    public List<RowData> getData() {
+        return getCells(getMainFile());
+    }
+
+    public List<String> getShkBoxes() {
+        return getDataShkBoxFromFile(getSecondaryFile());
+    }
+
+    public void toMainConsole() {
+        getData().forEach(System.out::println);
+    }
+
+    public void toSHKConsole() {
+        getShkBoxes().forEach(System.out::println);
     }
 }
-

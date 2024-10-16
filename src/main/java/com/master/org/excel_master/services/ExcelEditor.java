@@ -17,9 +17,9 @@ import java.util.List;
 public class ExcelEditor {
     private static final Logger LOGGER = LogManager.getLogger(FileHandler.class);
 
-    public void writeDataToFile(List<RowData> rowDataList, File file) {
+    public void writeDataToFile(List<RowData> rowDataList, List<String> shkBoxes, File file) {
         String filePath = file.getParent() + "\\result.xlsx";
-        LOGGER.info("Начало записи данных в файл Excel: {}", filePath);
+        LOGGER.info("Start writing data to the file excel: {}", filePath);
 
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Sheet1");
@@ -38,20 +38,28 @@ public class ExcelEditor {
 
             row.createCell(0).setCellValue(rowData.getBarcode());
             row.createCell(1).setCellValue(rowData.getCountItems());
-            row.createCell(2).setCellValue(rowData.getCountBoxes());
+
+            int countBoxesIndex = (int) rowData.getCountBoxes();
+            LOGGER.info("index: " + (countBoxesIndex-1));
+            if (countBoxesIndex < shkBoxes.size()) {
+                row.createCell(2).setCellValue(shkBoxes.get(countBoxesIndex-1));
+            } else {
+                LOGGER.warn("Index out of bounds for shkBoxes: {}", countBoxesIndex-1);
+                row.createCell(2).setCellValue("N/A");
+            }
         }
 
         // Сохранение файла
         try (FileOutputStream fileOut = new FileOutputStream(filePath)) {
             workbook.write(fileOut);
-            LOGGER.info("Данные успешно записаны в файл: {}", filePath);
+            LOGGER.info("Data successfully written to file: {}", filePath);
         } catch (IOException e) {
-            LOGGER.error("Ошибка записи в файл: {}", e.getMessage());
+            LOGGER.error("Error writing to a file: {}", e.getMessage());
         } finally {
             try {
                 workbook.close();
             } catch (IOException e) {
-                LOGGER.error("Ошибка закрытия файла: {}", e.getMessage());
+                LOGGER.error("File close error: {}", e.getMessage());
             }
         }
     }
