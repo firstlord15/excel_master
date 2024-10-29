@@ -5,6 +5,7 @@ import com.master.org.excel_master.utils.FileHandler;
 import com.master.org.excel_master.utils.WorkbookBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -58,27 +59,29 @@ public class FileReader {
     private List<RowData> extractDataFromSheet(XSSFSheet sheet) {
         LOGGER.info("Extracting data from sheet...");
         List<RowData> data = new ArrayList<>();
-        double[] countBoxes = new double[1];
-
+        double difference = sheet.getRow(1).getCell(4).getNumericCellValue();
+        var countBoxes = new double[1];
         for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
             XSSFRow row = sheet.getRow(rowIndex);
-
             if (row != null) {
-                RowData rowData = new RowData();
-                for (int colIndex = 0; colIndex < row.getLastCellNum(); colIndex++) {
-                    XSSFCell cell = row.getCell(colIndex);
-                    if (cell != null) {
-                        switch (colIndex) {
-                            case 0 -> rowData.processBarcodeCell(cell);
-                            case 1 -> rowData.processCountItemsCell(cell);
-                            case 4 -> rowData.processCountBoxesCell(cell, countBoxes);
+                if (row.getPhysicalNumberOfCells() >= 3){
+                    RowData rowData = new RowData();
+                    for (int colIndex = 0; colIndex < row.getLastCellNum(); colIndex++) {
+                        XSSFCell cell = row.getCell(colIndex);
+                        if (cell != null) {
+                            CellType cellType = cell.getCellType();
+                            if (cellType == CellType.STRING || cellType == CellType.NUMERIC) {
+                                switch (colIndex) {
+                                    case 0 -> rowData.processBarcodeCell(cell);
+                                    case 1 -> rowData.processCountItemsCell(cell);
+                                    case 4 -> rowData.processCountBoxesCell(cell, countBoxes, difference);
+                                }
+                            }
                         }
                     }
+                    rowData.setCountBoxes(countBoxes[0]);
+                    data.add(rowData);
                 }
-                rowData.setCountBoxes(countBoxes[0]);
-                data.add(rowData);
-            } else {
-                LOGGER.warn("Null row found at index {}.", rowIndex);
             }
         }
         LOGGER.debug("Row data added: {}", data.size());

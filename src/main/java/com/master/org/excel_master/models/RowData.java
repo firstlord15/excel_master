@@ -1,19 +1,18 @@
 package com.master.org.excel_master.models;
 
+import com.master.org.excel_master.utils.FileHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 
 public class RowData {
+    private static final Logger LOGGER = LogManager.getLogger(FileHandler.class);
     private double barcode;
     private double countItems;
     private double countBoxes;
 
     public RowData() {}
-    public RowData(double barcode, double countItems, double countBoxes) {
-        this.barcode = barcode;
-        this.countItems = countItems;
-        this.countBoxes = countBoxes;
-    }
 
     public void processBarcodeCell(XSSFCell cell) {
         try {
@@ -22,7 +21,7 @@ public class RowData {
                 case STRING -> setBarcode(Double.parseDouble(cell.getStringCellValue()));
             }
         } catch (NumberFormatException e) {
-            System.out.println("Невозможно преобразовать строку в число: " + cell.getStringCellValue());
+            LOGGER.error("Unable to convert a string to a number: {}", cell.getStringCellValue());
         }
     }
 
@@ -30,13 +29,14 @@ public class RowData {
         if (cell.getCellType() == CellType.NUMERIC) {
             setCountItems(cell.getNumericCellValue());
         } else {
+            LOGGER.warn("Default value is specified -1");
             setCountItems(-1); // Значение по умолчанию, если данные некорректны
         }
     }
 
-    public void processCountBoxesCell(XSSFCell cell, double[] countBoxes) {
+    public void processCountBoxesCell(XSSFCell cell, double[] countBoxes, double difference) {
         if (cell.getCellType() == CellType.NUMERIC) {
-            countBoxes[0] = cell.getNumericCellValue();
+            countBoxes[0] = cell.getNumericCellValue() - difference + 1;
         }
     }
 
